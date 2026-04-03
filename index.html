@@ -6,250 +6,415 @@
 
 <style>
 body{
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background:#0a0a12;
   color:white;
   text-align:center;
+  margin:0;
 }
 
-/* 🔥 TITULO NEON (REDUCIDO) */
+.center{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+
 .title{
   font-size:60px;
   font-weight:bold;
   color:#E220F5;
-  text-shadow:
-    0 0 4px #E220F5,
-    0 0 8px #932DCC;
+  text-shadow:0 0 4px #E220F5, 0 0 8px #932DCC;
 }
 
-/* RANGO */
 .rank{
   font-size:50px;
-  font-weight:bold;
   margin:10px;
   text-shadow:0 0 6px currentColor;
+  font-weight:900;
+  letter-spacing:1px;
 }
 
-/* COLORES */
-.hierro{color:#9ca3af;}
-.bronce{color:#cd7f32;}
-.plata{color:#c0c0c0;}
-.oro{color:#ffd700;}
-.platino{color:#38bdf8;}
-.esmeralda{color:#22c55e;}
-.diamante{color:#60a5fa;}
-.master{color:#E220F5;}
-.grandmaster{color:#932DCC;}
-.challenger{color:#ff00ff;}
+select{
+  padding:14px;
+  font-size:18px;
+  border-radius:8px;
+  background:#0f0f1a;
+  color:white;
+  border:1px solid #932DCC;
+  box-shadow:0 0 6px #932DCC;
+}
 
-/* INPUT */
-input{
+.lp-input{
+  width:100px;
+  text-align:center;
   padding:10px;
   margin:6px;
   border-radius:6px;
   border:1px solid #932DCC;
-  font-size:16px;
   background:#0f0f1a;
   color:white;
-  box-shadow:0 0 4px #932DCC;
 }
 
-.lp-input{
-  width:90px;
-  text-align:center;
-}
-
-/* BOTONES NEON (REDUCIDO) */
 button{
-  padding:16px;
+  padding:10px 16px;
   margin:6px;
   border:none;
   border-radius:6px;
-  font-size:20px;
-  font-weight:bold;
-  cursor:pointer;
+  font-size:16px;
   color:white;
   background:#932DCC;
-  box-shadow:0 0 6px #932DCC, 0 0 10px #E220F5;
-  transition:0.2s;
-}
-
-button:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 10px #E220F5, 0 0 16px #932DCC;
 }
 
 .win{background:#22c55e;}
 .loss{background:#ef4444;}
 
-.reset{
-  background:#64748b;
-  display:block;
-  margin:10px auto;
+.win-loss{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  align-items:center;
 }
 
-.add{
-  background:#E220F5;
+.row{
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 
-/* SELECT */
-select{
-  padding:10px;
-  font-size:16px;
-  border-radius:6px;
-  background:#0f0f1a;
-  color:white;
-  border:1px solid #932DCC;
-  box-shadow:0 0 4px #932DCC;
-}
-
-/* STATUS */
 #status{
-  font-size:60px;
-  font-weight:bold;
+  font-size:48px;
   margin:20px;
-  text-shadow:0 0 8px currentColor;
 }
 
-/* CARD */
+.socials{
+  position: fixed;
+  bottom: 10px;
+  left: 12px;
+  display:flex;
+  gap:4px;
+}
+
+.social-btn{
+  padding:3px 6px;
+  font-size:11px;
+  background:#0f0f1a;
+  color:#E220F5;
+  border:1px solid #932DCC;
+}
+
+.reset-btn{
+  position: fixed;
+  bottom: 50px;
+  right: 12px;
+  padding:6px 10px;
+  font-size:12px;
+  background:#1f2937;
+  color:#ef4444;
+  border:1px solid #ef4444;
+}
+
 .card{
   background:#0f0f1a;
   padding:12px;
-  margin:10px auto;
+  margin:10px;
   border-radius:10px;
   width:260px;
   border:1px solid #932DCC;
-  box-shadow:0 0 6px #932DCC;
 }
 
-/* 🔥 SEPARACIÓN CHAMP TRACKER */
-.champ-title{
-  margin-top: 40px;
-}
-
-/* FIRMA */
 .signature{
   position: fixed;
   bottom: 10px;
   right: 12px;
-  font-size: 12px;
-  opacity: 0.15; /* 👈 ajusta aquí */
+  font-size:30px;
+  opacity:0.8;
+}
+
+.neon{
   color:#E220F5;
+  text-shadow:
+    0 0 4px #E220F5,
+    0 0 8px #E220F5,
+    0 0 16px #932DCC,
+    0 0 32px #932DCC;
 }
 </style>
 </head>
 
 <body>
 
-<div class="title">Zenkai Tracker</div>
+<div id="setup" class="center">
+  <div class="title">Completa</div>
 
-<div id="setup">
-<select id="rank"></select><br>
-<input id="lpStart" class="lp-input" type="number" placeholder="LP actual"><br>
-<button onclick="saveSetup()">Empezar</button>
+  <select id="rank"></select>
+  <input id="lpStart" class="lp-input" type="number" placeholder="LP inicial (0-99)">
+  <button onclick="saveSetup()">Empezar</button>
 </div>
 
-<div id="app" style="display:none">
+<div id="app" class="center" style="display:none">
 
-<div id="rankDisplay" class="rank"></div>
-<h2 id="lpDisplay"></h2>
+  <div id="rankDisplay" class="rank"></div>
+  <h2 id="lpDisplay"></h2>
+  <h3 id="status"></h3>
 
-<div id="status"></div>
+  <select id="champSelect"></select>
 
-<button class="reset" onclick="resetAll()">Reset</button>
+  <div class="win-loss">
 
-<select id="champSelect"></select><br>
+    <div class="row">
+      <div>WIN LP</div>
+      <input id="lpWin" class="lp-input" type="number">
+      <button class="win" onclick="addGame('W')">WIN</button>
+    </div>
 
-<input id="lpChange" class="lp-input" type="number" placeholder="Ingresa LP"><br>
+    <div class="row">
+      <div>LOSS LP</div>
+      <input id="lpLoss" class="lp-input" type="number">
+      <button class="loss" onclick="addGame('L')">LOSS</button>
+    </div>
 
-<button class="win" onclick="addGame('W')">WIN</button>
-<button class="loss" onclick="addGame('L')">LOSS</button>
+  </div>
 
-<h2 class="champ-title">Champ Tracker</h2>
-<button class="add" onclick="addChamp()">Añadir campeón</button>
-
-<div id="champContainer"></div>
-
+  <button onclick="addChamp()">Añadir campeón</button>
+  <div id="champContainer"></div>
 </div>
 
-<div class="signature">pico pal que lee</div>
+<div class="signature neon">RyuZeNK.Ai</div>
+<button class="reset-btn" onclick="resetAll()">Reset</button>
+
+<div class="socials">
+  <a href="https://www.instagram.com/ryuzenk.ai/" target="_blank">
+    <button class="social-btn">Instagram</button>
+  </a>
+  <a href="https://www.linkedin.com/in/nicolas-pena-fullstack/" target="_blank">
+    <button class="social-btn">LinkedIn</button>
+  </a>
+  <a href="https://github.com/RyuZeNK-Ai" target="_blank">
+    <button class="social-btn">GitHub</button>
+  </a>
+</div>
 
 <script>
+const tiers=["Hierro","Bronce","Plata","Oro","Platino","Esmeralda","Diamante","Maestro","Gran Maestro","Challenger"];
+const divisions=["I","II","III","IV"];
 
-// ===== SISTEMA =====
-const tiers=["Hierro","Bronce","Plata","Oro","Platino","Esmeralda","Diamante"];
-const divisions=["IV","III","II","I"];
+const tierColors={
+  "Hierro":"#9ca3af",
+  "Bronce":"#b45309",
+  "Plata":"#d1d5db",
+  "Oro":"#facc15",
+  "Platino":"#67e8f9",
+  "Esmeralda":"#10b981",
+  "Diamante":"#60a5fa",
+  "Maestro":"#c084fc",
+  "Gran Maestro":"#ef4444",
+  "Challenger":"#facc15"
+};
 
 const rankEl=document.getElementById("rank");
 const lpStartEl=document.getElementById("lpStart");
 const rankDisplay=document.getElementById("rankDisplay");
 const lpDisplay=document.getElementById("lpDisplay");
 const statusEl=document.getElementById("status");
-const lpChangeEl=document.getElementById("lpChange");
 const champContainer=document.getElementById("champContainer");
 const champSelect=document.getElementById("champSelect");
 
-rankEl.innerHTML = tiers.flatMap(t =>
-  divisions.map(d => `<option>${t} ${d}</option>`)
-).join("");
+// SOLO tiers normales tienen divisiones
+rankEl.innerHTML = tiers.flatMap(t => {
+  if(["Maestro","Gran Maestro","Challenger"].includes(t)){
+    return [`<option>${t}</option>`];
+  }
+  return divisions.map(d => `<option>${t} ${d}</option>`);
+}).join("");
 
 let data=JSON.parse(localStorage.getItem("data"));
 if(data) loadApp();
 
 function saveSetup(){
-  let index = rankEl.selectedIndex;
+  let lp=parseInt(lpStartEl.value);
+  if(isNaN(lp)||lp<0||lp>1000){
+    alert("LP inválido");
+    return;
+  }
+
+  let selected=rankEl.value;
+
+  let tierIndex=tiers.indexOf(selected.split(" ")[0]);
+  let divisionIndex=0;
+
+  if(!["Maestro","Gran Maestro","Challenger"].includes(selected)){
+    divisionIndex=divisions.indexOf(selected.split(" ")[1]);
+  }
 
   data={
-    tierIndex: Math.floor(index / 4),
-    divisionIndex: index % 4,
-    lp:parseInt(lpStartEl.value)||0,
-    lossStreak:0,
-    champs:[]
+    tierIndex,
+    divisionIndex,
+    lp:lp,
+    champs:[],
+    lossStreak:0
   };
 
-  save();
-  loadApp();
+  save(); loadApp();
 }
 
 function loadApp(){
-  document.getElementById("setup").style.display="none";
-  document.getElementById("app").style.display="block";
+  setup.style.display="none";
+  app.style.display="flex";
   update();
 }
 
+function addChamp(){
+  let name=prompt("Nombre del campeón");
+  if(!name) return;
+
+  name = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+
+  if(!/^[a-zA-Záéíóúñ ]+$/.test(name)){
+    alert("Solo letras");
+    return;
+  }
+
+  let games=prompt("Partidas");
+  if(!/^\d+$/.test(games)){
+    alert("Solo números");
+    return;
+  }
+
+  let wr=prompt("Winrate 0-100");
+  if(!/^\d+(\.\d+)?$/.test(wr) || wr<0 || wr>100){
+    alert("Winrate inválido");
+    return;
+  }
+
+  games=parseInt(games);
+  wr=parseFloat(wr);
+
+  let wins=Math.round(games*(wr/100));
+  let losses=games-wins;
+
+  data.champs.push({name,w:wins,l:losses});
+
+  save(); update();
+}
+
+function checkPromotion(){
+
+  if(tiers[data.tierIndex] === "Challenger"){
+    if(data.lp > 1000) data.lp = 1000;
+    return;
+  }
+
+  if(tiers[data.tierIndex] === "Gran Maestro"){
+    if(data.lp >= 500){
+      data.lp -= 500;
+      data.tierIndex++;
+    }
+    return;
+  }
+
+  if(tiers[data.tierIndex] === "Maestro"){
+    if(data.lp >= 200){
+      data.lp -= 200;
+      data.tierIndex++;
+    }
+    return;
+  }
+
+  while(data.lp >= 100){
+    data.lp -= 100;
+
+    if(data.divisionIndex > 0){
+      data.divisionIndex--;
+    }else{
+      data.divisionIndex = 3;
+      data.tierIndex++;
+    }
+  }
+}
+
+function checkDemotion(){
+
+  if(tiers[data.tierIndex] === "Challenger"){
+    if(data.lp < 0){
+      data.tierIndex--;
+      data.lp = 499;
+    }
+    return;
+  }
+
+  if(tiers[data.tierIndex] === "Gran Maestro"){
+    if(data.lp < 0){
+      data.tierIndex--;
+      data.lp = 199;
+    }
+    return;
+  }
+
+  if(tiers[data.tierIndex] === "Maestro"){
+    if(data.lp < 0){
+      data.tierIndex--;
+      data.divisionIndex = 0;
+      data.lp = 99;
+    }
+    return;
+  }
+
+  if(data.tierIndex === 0 && data.divisionIndex === 3){
+    if(data.lp < 0) data.lp = 0;
+    return;
+  }
+
+  while(data.lp < 0){
+    if(data.divisionIndex < 3){
+      data.divisionIndex++;
+      data.lp = 0;
+      return;
+    }else{
+      if(data.tierIndex > 0){
+        data.tierIndex--;
+        data.divisionIndex = 0;
+        data.lp = 99;
+        return;
+      }
+    }
+  }
+}
+
 function addGame(result){
-  let lp=parseInt(lpChangeEl.value);
   let champName=champSelect.value;
-  if(isNaN(lp)||!champName) return;
+
+  if(!champName){
+    alert("Debes seleccionar un campeón");
+    return;
+  }
+
+  let lp = result==="W"
+    ? parseInt(lpWin.value)
+    : parseInt(lpLoss.value);
+
+  if(isNaN(lp)||lp<=0||lp>60){
+    alert("LP debe estar entre 1 y 60");
+    return;
+  }
 
   let champ=data.champs.find(c=>c.name===champName);
 
   if(result==="W"){
     data.lp+=lp;
-    data.lossStreak=0;
     champ.w++;
+    data.lossStreak=0;
   }else{
     data.lp-=lp;
-    data.lossStreak++;
     champ.l++;
+    data.lossStreak++;
   }
 
-  if(data.lp>=100){
-    data.lp-=100;
-    if(data.divisionIndex<3){
-      data.divisionIndex++;
-    }else{
-      data.tierIndex++;
-      data.divisionIndex=0;
-    }
-  }
+  checkPromotion();
+  checkDemotion();
 
-  if(data.lp<0){
-    data.lp=0;
-  }
-
-  save();
-  update();
+  save(); update();
 }
 
 function updateStatus(){
@@ -267,21 +432,15 @@ function updateStatus(){
   }
 }
 
-function addChamp(){
-  let name=prompt("Nombre del campeón");
-  if(!name) return;
-
-  data.champs.push({name,w:0,l:0});
-  save();
-  update();
-}
-
 function update(){
   let tier=tiers[data.tierIndex];
-  let div=divisions[data.divisionIndex];
 
-  rankDisplay.innerText=tier+" "+div;
-  rankDisplay.className="rank "+tier.toLowerCase();
+  let text = ["Maestro","Gran Maestro","Challenger"].includes(tier)
+    ? tier
+    : tier+" "+divisions[data.divisionIndex];
+
+  rankDisplay.innerText=text;
+  rankDisplay.style.color = tierColors[tier];
 
   lpDisplay.innerText="LP: "+data.lp;
 
@@ -299,14 +458,12 @@ function update(){
         <b>${c.name}</b><br>
         Partidas: ${total}<br>
         WR: ${wr}%
-      </div>
-    `;
+      </div>`;
   });
 }
 
 function save(){localStorage.setItem("data",JSON.stringify(data));}
 function resetAll(){localStorage.removeItem("data");location.reload();}
-
 </script>
 
 </body>
