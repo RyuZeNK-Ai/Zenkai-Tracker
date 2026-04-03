@@ -5,63 +5,108 @@
 <title>EloTracker</title>
 
 <style>
-body { font-family: Arial; background:#0f172a; color:white; text-align:center; }
-input, select { padding:8px; margin:5px; }
-button { padding:10px; margin:5px; border:none; border-radius:6px; cursor:pointer; }
-.win{background:#22c55e;} .loss{background:#ef4444;} .reset{background:#64748b;}
-.green{color:#22c55e;} .yellow{color:#eab308;} .red{color:#ef4444;}
-.small{opacity:.7;font-size:12px}
+body {
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: #e5e7eb;
+  margin: 0;
+}
+
+.container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+h1, h2, h3 {
+  margin: 10px 0;
+}
+
+input, select {
+  width: 90%;
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 6px;
+  border: none;
+}
+
+button {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.win { background:#22c55e; }
+.loss { background:#ef4444; }
+.reset { background:#64748b; }
+
+.status {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.green { color:#22c55e; }
+.yellow { color:#eab308; }
+.red { color:#ef4444; }
+
+.small {
+  opacity: 0.7;
+  font-size: 12px;
+}
 </style>
 </head>
 
 <body>
 
+<div class="container">
+
 <h1>EloTracker</h1>
-<p class="small">Controla tu MMR. Deja de grindear a ciegas.</p>
+<p class="small">Controla tu MMR y toma mejores decisiones</p>
 
-<div id="setup">
-<h2>Setup Inicial</h2>
+<div id="setup" class="card">
 
-<select id="rank">
-<option>Hierro IV</option><option>Hierro III</option><option>Hierro II</option><option>Hierro I</option>
-<option>Bronce IV</option><option>Bronce III</option><option>Bronce II</option><option>Bronce I</option>
-<option>Plata IV</option><option>Plata III</option><option>Plata II</option><option>Plata I</option>
-<option>Oro IV</option><option>Oro III</option><option>Oro II</option><option>Oro I</option>
-<option>Platino IV</option><option>Platino III</option><option>Platino II</option><option>Platino I</option>
-<option>Esmeralda IV</option><option>Esmeralda III</option><option>Esmeralda II</option><option>Esmeralda I</option>
-<option>Diamante IV</option><option>Diamante III</option><option>Diamante II</option><option>Diamante I</option>
-<option>Maestro</option><option>Gran Maestro</option><option>Challenger</option>
-</select>
+<h2>Setup</h2>
 
-<br>
+<select id="rank"></select>
 
-<input id="lpStart" type="number" placeholder="LP actual"><br>
+<input id="lpStart" type="number" placeholder="LP actual">
 
-<input id="lpWin" type="number" placeholder="Ganas">
-<input id="lpLoss" type="number" placeholder="Pierdes">
+<input id="lpWin" type="number" placeholder="LP ganado">
+<input id="lpLoss" type="number" placeholder="LP perdido">
 
-<h3>WR Global</h3>
-<input id="baseWins" type="number" placeholder="Wins">
-<input id="baseLosses" type="number" placeholder="Losses">
+<input id="baseWins" type="number" placeholder="Wins totales">
+<input id="baseLosses" type="number" placeholder="Losses totales">
 
 <h3>Campeones</h3>
 <div id="champInputs"></div>
 
 <button onclick="saveSetup()">Empezar</button>
+
 </div>
 
-<div id="app" style="display:none">
+<div id="app" class="card" style="display:none">
 
 <h2 id="rankDisplay"></h2>
 <h3 id="lpDisplay"></h3>
 
-<h2 id="status"></h2>
+<div class="status" id="status"></div>
+
 <p id="mmr"></p>
 <p id="wr"></p>
 <p id="baseWR"></p>
 <p id="advice"></p>
 
-<button class="reset" onclick="resetAll()">RESET</button>
+<button class="reset" onclick="resetAll()">Reset</button>
 <button onclick="exportData()">Exportar</button>
 <input type="file" onchange="importData(event)">
 
@@ -70,20 +115,18 @@ button { padding:10px; margin:5px; border:none; border-radius:6px; cursor:pointe
 <select id="champSelect"></select>
 <input id="lpChange" type="number" placeholder="LP">
 
-<br>
-
 <button class="win" onclick="addGame('W')">WIN</button>
 <button class="loss" onclick="addGame('L')">LOSS</button>
-
-<p class="small">Solo se preguntará descenso en División IV</p>
-
-<hr>
 
 <div id="champStats"></div>
 
 </div>
 
+</div>
+
 <script>
+
+// ===== RANKS =====
 const ranks = [
 "Hierro IV","Hierro III","Hierro II","Hierro I",
 "Bronce IV","Bronce III","Bronce II","Bronce I",
@@ -95,15 +138,16 @@ const ranks = [
 "Maestro","Gran Maestro","Challenger"
 ];
 
+// llenar select
+rank.innerHTML = ranks.map(r => `<option>${r}</option>`).join("");
+
+// ===== DATA =====
 let data = JSON.parse(localStorage.getItem("data"));
 
-if (!data) initSetup();
+if(!data) initSetup();
 else loadApp();
 
-function isDivisionIV(){
-  return ranks[data.rankIndex].includes("IV");
-}
-
+// ===== SETUP =====
 function initSetup(){
   let html="";
   for(let i=0;i<5;i++){
@@ -115,6 +159,7 @@ function initSetup(){
 }
 
 function saveSetup(){
+
   let champs={};
   let inputs=document.querySelectorAll("#champInputs input");
 
@@ -137,55 +182,56 @@ function saveSetup(){
     baseLosses:parseInt(baseLosses.value)||0,
     champs,
     games:[],
-    mmrValue: win - loss
+    mmrValue:win-loss
   };
 
-  save(); loadApp();
+  save();
+  loadApp();
 }
 
-function loadApp(){
-  setup.style.display="none";
-  app.style.display="block";
-  loadChamps();
-  update();
+// ===== CORE =====
+
+function isDivisionIV(){
+  return ranks[data.rankIndex].includes("IV");
 }
 
-function loadChamps(){
-  champSelect.innerHTML="";
-  for(let c in data.champs){
-    champSelect.innerHTML+=`<option>${c}</option>`;
+function getLossStreak(){
+  let s=0;
+  for(let i=data.games.length-1;i>=0;i--){
+    if(data.games[i].result==="L") s++;
+    else break;
   }
+  return s;
 }
 
 function addGame(result){
+
   let champ=champSelect.value;
   let lp=parseInt(lpChange.value);
-  if(isNaN(lp)) return alert("LP requerido");
+  if(isNaN(lp)) return;
 
   if(result==="W"){
     data.lp+=lp;
     data.champs[champ].w++;
     data.baseWins++;
   }else{
+
     data.lp-=lp;
 
     if(data.lp<0){
 
       if(isDivisionIV()){
         let d=prompt("¿Bajaste? (si/no)");
-
         if(d==="si"){
-          let newLP=prompt("LP final:");
-          if(data.rankIndex>0){
-            data.rankIndex--;
-            data.lp=parseInt(newLP)||0;
-          }
+          let newLP=prompt("LP final");
+          data.rankIndex=Math.max(0,data.rankIndex-1);
+          data.lp=parseInt(newLP)||0;
         }else data.lp=0;
-
       }else{
-        data.rankIndex--;
+        data.rankIndex=Math.max(0,data.rankIndex-1);
         data.lp=75;
       }
+
     }
 
     data.champs[champ].l++;
@@ -193,80 +239,84 @@ function addGame(result){
   }
 
   if(data.lp>=100){
-    if(data.rankIndex<ranks.length-1){
-      data.lp-=100;
-      data.rankIndex++;
-    }
+    data.rankIndex=Math.min(ranks.length-1,data.rankIndex+1);
+    data.lp-=100;
   }
 
   data.games.push({result,lp,champ});
-  save(); update();
+  save();
+  update();
 }
 
-function save(){localStorage.setItem("data",JSON.stringify(data));}
-function last(n){return data.games.slice(-n);}
-
-function update(){
-  rankDisplay.innerText=ranks[data.rankIndex];
-  lpDisplay.innerText="LP: "+data.lp;
-
-  let stats=updateStats();
-  updateStatus(stats);
-  updateChamps();
-
-  baseWR.innerText=`WR Global: ${getBaseWR()}%`;
-}
+// ===== STATS =====
 
 function getBaseWR(){
   let t=data.baseWins+data.baseLosses;
-  return t?(data.baseWins/t*100).toFixed(1):0;
+  return t?(data.baseWins/t*100):0;
 }
 
 function updateStats(){
+
   let wins=data.games.filter(g=>g.result==="W");
   let losses=data.games.filter(g=>g.result==="L");
 
   let avgWin=wins.length?wins.reduce((a,b)=>a+b.lp,0)/wins.length:data.lpWin;
   let avgLoss=losses.length?losses.reduce((a,b)=>a+b.lp,0)/losses.length:data.lpLoss;
 
-  let last20=last(20);
-  let wr=last20.length?(last20.filter(g=>g.result==="W").length/last20.length)*100:getBaseWR();
+  let last20=data.games.slice(-20);
+  let recentWR=last20.length?(last20.filter(g=>g.result==="W").length/last20.length)*100:getBaseWR();
+
+  let wr = recentWR*0.7 + getBaseWR()*0.3;
 
   let newMMR=(avgWin-avgLoss)+((wr-50)*0.2);
 
-  let prev=(typeof data.mmrValue==="number")?data.mmrValue:(data.lpWin-data.lpLoss);
+  let prev=data.mmrValue||0;
   data.mmrValue=prev*0.7+newMMR*0.3;
 
-  mmr.innerText="MMR: "+data.mmrValue.toFixed(2);
-  document.getElementById("wr").innerText="WR(20): "+wr.toFixed(1)+"%";
+  save();
 
-  return{mmr:data.mmrValue,wr};
+  mmr.innerText="MMR: "+data.mmrValue.toFixed(2);
+  document.getElementById("wr").innerText="WR: "+wr.toFixed(1)+"%";
+
+  return {mmr:data.mmrValue,wr};
 }
 
+// ===== STATUS =====
+
 function updateStatus({mmr,wr}){
-  let losses=last(5).filter(g=>g.result==="L").length;
 
-  let status="JUGAR",color="green",msg="";
+  let streak=getLossStreak();
 
-  if(losses>=3 || mmr<-2){
-    status="PARAR";color="red";
-    msg="Detente. Estás perdiendo MMR.";
+  let s="JUGAR",c="green",msg="";
+
+  if(streak>=3||mmr<-2){
+    s="PARAR";c="red";msg="Detente.";
   }
-  else if(losses===2 || mmr<0){
-    status="CUIDADO";color="yellow";
-    msg="Cuidado.";
+  else if(streak===2||mmr<0){
+    s="CUIDADO";c="yellow";msg="Cuidado.";
   }
   else{
-    if(mmr>2) msg="MMR subiendo. Sigue.";
-    else if(wr>55) msg="Vas bien. Sigue.";
+    if(mmr>2) msg="MMR subiendo.";
+    else if(wr>55) msg="Vas bien.";
     else msg="Estable.";
   }
 
-  status.innerHTML=`<span class="${color}">${status}</span>`;
+  status.innerHTML=`<span class="${c}">${s}</span>`;
   advice.innerText=msg;
 }
 
-function updateChamps(){
+// ===== UI =====
+
+function update(){
+
+  rankDisplay.innerText=ranks[data.rankIndex];
+  lpDisplay.innerText="LP: "+data.lp;
+
+  let stats=updateStats();
+  updateStatus(stats);
+
+  baseWR.innerText="WR Global: "+getBaseWR().toFixed(1)+"%";
+
   let html="";
   for(let c in data.champs){
     let w=data.champs[c].w,l=data.champs[c].l;
@@ -275,7 +325,14 @@ function updateChamps(){
     html+=`<p>${c}: ${wr}% (${total})</p>`;
   }
   champStats.innerHTML=html;
+
+  champSelect.innerHTML=Object.keys(data.champs)
+    .map(c=>`<option>${c}</option>`).join("");
 }
+
+// ===== STORAGE =====
+
+function save(){localStorage.setItem("data",JSON.stringify(data));}
 
 function resetAll(){
   localStorage.removeItem("data");
@@ -299,6 +356,7 @@ function importData(e){
   };
   reader.readAsText(file);
 }
+
 </script>
 
 </body>
